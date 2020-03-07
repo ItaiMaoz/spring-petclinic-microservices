@@ -17,6 +17,8 @@ package org.springframework.samples.petclinic.visits.web;
 
 import java.util.List;
 import javax.validation.Valid;
+
+import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
@@ -41,19 +43,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
+@Timed("petclinic.visit")
 class VisitResource {
 
     private final VisitRepository visitRepository;
 
     @PostMapping("owners/*/pets/{petId}/visits")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    void create(
+    @ResponseStatus(HttpStatus.CREATED)
+    Visit create(
         @Valid @RequestBody Visit visit,
         @PathVariable("petId") int petId) {
 
         visit.setPetId(petId);
         log.info("Saving visit {}", visit);
-        visitRepository.save(visit);
+        return visitRepository.save(visit);
     }
 
     @GetMapping("owners/*/pets/{petId}/visits")

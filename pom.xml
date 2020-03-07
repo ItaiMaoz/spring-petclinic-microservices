@@ -6,12 +6,12 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.0.6.RELEASE</version>
+        <version>2.2.1.RELEASE</version>
     </parent>
 
     <groupId>org.springframework.samples</groupId>
     <artifactId>spring-petclinic-microservices</artifactId>
-    <version>2.0.6</version>
+    <version>2.2.1</version>
     <name>${project.artifactId}</name>
     <packaging>pom</packaging>
 
@@ -23,35 +23,26 @@
         <module>spring-petclinic-config-server</module>
         <module>spring-petclinic-discovery-server</module>
         <module>spring-petclinic-api-gateway</module>
-        <module>spring-petclinic-hystrix-dashboard</module>
     </modules>
 
     <properties>
         <java.version>1.8</java.version>
         <assertj.version>3.11.1</assertj.version>
 
-        <spring-boot.version>2.0.4.RELEASE</spring-boot.version>
-        <spring-cloud.version>Finchley.SR2</spring-cloud.version>
-        <sleuth.version>2.0.0.RC2</sleuth.version>
+        <spring-boot.version>2.2.0.RELEASE</spring-boot.version>
+        <spring-cloud.version>Hoxton.RC2</spring-cloud.version>
 
         <maven-surefire-plugin.version>2.22.0</maven-surefire-plugin.version>
 
-        <docker.image.prefix>mszarlinski</docker.image.prefix>
+        <docker.image.prefix>springcommunity</docker.image.prefix>
         <docker.image.exposed.port>9090</docker.image.exposed.port>
         <docker.image.dockerfile.dir>${basedir}</docker.image.dockerfile.dir>
         <docker.image.dockerize.version>v0.6.1</docker.image.dockerize.version>
-        <docker.plugin.version>0.4.13</docker.plugin.version>
+        <docker.plugin.version>1.2.0</docker.plugin.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-sleuth-dependencies</artifactId>
-                <type>pom</type>
-                <scope>import</scope>
-                <version>${sleuth.version}</version>
-            </dependency>
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
@@ -77,6 +68,7 @@
                 <version>${assertj.version}</version>
                 <scope>test</scope>
             </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -160,6 +152,8 @@
                             <configuration>
                                 <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
                                 <dockerDirectory>${docker.image.dockerfile.dir}</dockerDirectory>
+                                <serverId>docker-hub</serverId>
+                                <registryUrl>https://index.docker.io/v1/</registryUrl>
                                 <resources>
                                     <resource>
                                         <targetPath>/</targetPath>
@@ -182,10 +176,24 @@
 
     <repositories>
         <repository>
-            <id>repository.spring.milestone</id>
-            <name>Spring Milestone Repository</name>
-            <url>http://repo.spring.io/milestone</url>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
         </repository>
     </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
 
 </project>
