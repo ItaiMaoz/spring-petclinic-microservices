@@ -31,6 +31,26 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(PetResource.class)
 @ActiveProfiles("test")
 class PetResourceTest {
+	
+	class TestOwner extends Owner{
+		private int testId;
+		
+		public TestOwner(int testId) {
+			this.setId(testId);
+		}
+		
+		
+		public void setId(int testId) {
+			this.testId = testId;
+		}
+		
+		@Override
+		public Integer getId() {
+			return Integer.valueOf(this.testId);
+		}
+		
+		
+	}
 
     @Autowired
     MockMvc mvc;
@@ -57,8 +77,9 @@ class PetResourceTest {
             .andExpect(jsonPath("$.type.id").value(6));
     }
 
+    //create pet id 2 under owner 2
     private Pet setupPet() {
-        Owner owner = new Owner();
+        Owner owner = new TestOwner(2);
         owner.setFirstName("George");
         owner.setLastName("Bush");
 
@@ -73,5 +94,31 @@ class PetResourceTest {
 
         owner.addPet(pet);
         return pet;
+    }
+    
+    @Test
+    void testOwnerAndPetRelationshipOK() throws Exception {
+    	
+    	Pet pet = setupPet();
+    	
+    	given(petRepository.findById(2)).willReturn(Optional.of(pet));
+    	
+        mvc.perform(get("/owners/2/pets/2").accept(MediaType.APPLICATION_JSON))
+        	.andExpect(status().isOk());
+    	
+    	
+    }
+    
+    @Test
+    void testOwnerAndPetRelationshipError() throws Exception {
+    	
+    	Pet pet = setupPet();
+    	
+    	given(petRepository.findById(2)).willReturn(Optional.of(pet));
+    	
+        mvc.perform(get("/owners/1/pets/2").accept(MediaType.APPLICATION_JSON))
+        	.andExpect(status().is(404));
+    	
+    	
     }
 }

@@ -60,11 +60,18 @@ class PetResource {
         return save(pet, petRequest);
     }
 
-    @PutMapping("/owners/*/pets/{petId}")
+    @PutMapping("/owners/{ownerId}/pets/{petId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void processUpdateForm(@RequestBody PetRequest petRequest) {
-        int petId = petRequest.getId();
+    public void processUpdateForm(@PathVariable("ownerId") int ownerId, @PathVariable("petId") int petIdPath, @RequestBody PetRequest petRequest) {
+        
+    	int petId = petRequest.getId();
+    	
+    	if (petId != petIdPath) {
+    		throw new ResourceNotFoundException("path ids mismatch");
+    	}
+    	
         Pet pet = findPetById(petId);
+        checkPetOwner(ownerId, pet);
         save(pet, petRequest);
     }
 
@@ -80,13 +87,21 @@ class PetResource {
         return petRepository.save(pet);
     }
 
-    @GetMapping("owners/*/pets/{petId}")
-    public PetDetails findPet(@PathVariable("petId") int petId) {
-        return new PetDetails(findPetById(petId));
+    @GetMapping("owners/{ownerId}/pets/{petId}")
+    public PetDetails findPet(@PathVariable("ownerId") int ownerId, @PathVariable("petId") int petId) {
+        Pet pet = findPetById(petId);
+        checkPetOwner(ownerId, pet);
+        
+        	return new PetDetails(pet);
     }
 
+	private void checkPetOwner(int ownerId, Pet pet) {
+		if (!pet.getOwner().getId().equals(Integer.valueOf(ownerId))) {
+        	throw new ResourceNotFoundException("Pet "+pet.getId().intValue()+" not found for owner" + ownerId);
+        }
+	}
 
-    private Pet findPetById(int petId) {
+	private Pet findPetById(int petId) {
         Optional<Pet> pet = petRepository.findById(petId);
         if (!pet.isPresent()) {
             throw new ResourceNotFoundException("Pet "+petId+" not found");
