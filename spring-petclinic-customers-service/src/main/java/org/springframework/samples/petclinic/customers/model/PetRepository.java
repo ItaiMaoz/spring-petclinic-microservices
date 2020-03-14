@@ -38,12 +38,14 @@ public interface PetRepository extends JpaRepository<Pet, Integer> {
      * Retrieve all {@link PetType}s from the data store.
      * @return a Collection of {@link PetType}s.
      */
-    @Query("SELECT ptype FROM PetType ptype ORDER BY ptype.name")
+/* FIXME retrun query for PetTypes 
+ *   @Query("SELECT ptype FROM PetType ptype ORDER BY ptype.name")
     List<PetType> findPetTypes();
-
-    @Query("FROM PetType ptype WHERE ptype.id = :typeId")
+*/
+	
+/*    @Query("FROM PetType ptype WHERE ptype.id = :typeId")
     Optional<PetType> findPetTypeById(@Param("typeId") int typeId);
-
+*/
 
 }
 

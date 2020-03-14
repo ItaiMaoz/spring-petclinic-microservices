@@ -15,36 +15,59 @@
  */
 package org.springframework.samples.petclinic.customers.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+
+import javax.validation.constraints.NotBlank;
+
+import org.springframework.validation.annotation.Validated;
+
+import lombok.EqualsAndHashCode;
 
 /**
  * @author Juergen Hoeller
  * Can be Cat, Dog, Hamster...
+ * 
+ * @author itaimaoz
+ * Changing to value object
  */
-@Entity
-@Table(name = "types")
+//@Embeddable
+@EqualsAndHashCode
+@Validated
 public class PetType {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
-    @Column(name = "name")
+    
+	@NotBlank
+	//FIXME use validation annotation
     private String name;
 
-    public Integer getId() {
-        return id;
-    }
 
-    public void setId(final Integer id) {
-        this.id = id;
-    }
-
+	private void setName(String name) {
+		this.name = name;
+	}
+	
     public String getName() {
         return this.name;
     }
+    
+	//FIXME use validation annotations
+    PetType(@NotBlank String petType) {
+    	
+    	if (petType == null) {
+    		throw new IllegalArgumentException("Pet Type was null");
+    	}
+    	
+    	petType = petType.trim().toLowerCase();
+    	
+    	if (petType.length() == 0 ) {
+    		throw new IllegalArgumentException("Pet Type was empty");
+    	}
+    	
+    	this.setName(petType);
+    }
+    
+    public static PetType getPetType(String petTypeString) {
+    	
+    	return new PetType(petTypeString);
+    }
+    
+    
+ 
 }

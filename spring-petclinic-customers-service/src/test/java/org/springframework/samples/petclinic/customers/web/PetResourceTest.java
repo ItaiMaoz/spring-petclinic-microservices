@@ -74,7 +74,7 @@ class PetResourceTest {
             .andExpect(content().contentType("application/json"))
             .andExpect(jsonPath("$.id").value(2))
             .andExpect(jsonPath("$.name").value("Basil"))
-            .andExpect(jsonPath("$.type.id").value(6));
+            .andExpect(jsonPath("$.type").value("dog"));
     }
 
     //create pet id 2 under owner 2
@@ -83,15 +83,12 @@ class PetResourceTest {
         owner.setFirstName("George");
         owner.setLastName("Bush");
 
-        Pet pet = new Pet();
+        Pet pet = new Pet(PetType.getPetType("dog"));
 
         pet.setName("Basil");
         pet.setId(2);
-
-        PetType petType = new PetType();
-        petType.setId(6);
-        pet.setType(petType);
-
+      
+        
         owner.addPet(pet);
         return pet;
     }

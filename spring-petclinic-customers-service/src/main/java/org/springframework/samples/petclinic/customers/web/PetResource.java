@@ -22,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.samples.petclinic.customers.model.*;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,10 +41,13 @@ class PetResource {
     private final PetRepository petRepository;
     private final OwnerRepository ownerRepository;
 
-
+    //TODO fix to use value objects
     @GetMapping("/petTypes")
     public List<PetType> getPetTypes() {
+    	return Collections.emptyList();
+   /* FIXME fix getting pet types
         return petRepository.findPetTypes();
+        */
     }
 
     @PostMapping("/owners/{ownerId}/pets")
@@ -52,7 +56,7 @@ class PetResource {
         @RequestBody PetRequest petRequest,
         @PathVariable("ownerId") int ownerId) {
 
-        final Pet pet = new Pet();
+        final Pet pet = new Pet(PetType.getPetType(petRequest.getType()));
         final Optional<Owner> optionalOwner = ownerRepository.findById(ownerId);
         Owner owner = optionalOwner.orElseThrow(() -> new ResourceNotFoundException("Owner "+ownerId+" not found"));
         owner.addPet(pet);
@@ -80,8 +84,8 @@ class PetResource {
         pet.setName(petRequest.getName());
         pet.setBirthDate(petRequest.getBirthDate());
 
-        petRepository.findPetTypeById(petRequest.getTypeId())
-            .ifPresent(pet::setType);
+//        petRepository.findPetTypeById(petRequest.getTypeId())
+//           .ifPresent(pet::setType);
 
         log.info("Saving pet {}", pet);
         return petRepository.save(pet);

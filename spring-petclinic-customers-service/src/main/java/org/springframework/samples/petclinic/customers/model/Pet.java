@@ -27,6 +27,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.core.style.ToStringCreator;
@@ -38,6 +41,7 @@ import org.springframework.core.style.ToStringCreator;
  * @author Juergen Hoeller
  * @author Sam Brannen
  * @author Maciej Szarlinski
+ * @author itaimaoz - changing to use PetType as ValueObject
  */
 @Entity
 @Table(name = "pets")
@@ -53,9 +57,10 @@ public class Pet {
     @Temporal(TemporalType.DATE)
     private Date birthDate;
 
-    @ManyToOne
-    @JoinColumn(name = "type_id")
-    private PetType type;
+    @Column(name = "type")
+    @NotBlank
+    private String typeTypeStr;
+    
 
     @ManyToOne
     @JoinColumn(name = "owner_id")
@@ -65,6 +70,22 @@ public class Pet {
     public Integer getId() {
         return id;
     }
+    
+    
+    public Pet(PetType petType) {
+    	_internalSetPetType(petType);
+    }
+    
+    private Pet () {
+    	
+    }
+    
+
+
+	private void _internalSetPetType(PetType petType) {
+    	//FIXME change back to PetType
+    	this.typeTypeStr = petType.getName();
+	}
 
     public void setId(final Integer id) {
         this.id = id;
@@ -87,12 +108,11 @@ public class Pet {
     }
 
     public PetType getType() {
-        return type;
+    	return PetType.getPetType(this.typeTypeStr);
+    	
+    	
     }
 
-    public void setType(final PetType type) {
-        this.type = type;
-    }
 
     public Owner getOwner() {
         return owner;

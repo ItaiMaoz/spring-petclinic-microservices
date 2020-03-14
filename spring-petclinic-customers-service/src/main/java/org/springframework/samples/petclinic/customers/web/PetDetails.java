@@ -38,13 +38,13 @@ class PetDetails {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date birthDate;
 
-    private PetType type;
+    private String type;
 
     PetDetails(Pet pet) {
         this.id = pet.getId();
         this.name = pet.getName();
         this.owner = pet.getOwner().getFirstName() + " " + pet.getOwner().getLastName();
         this.birthDate = pet.getBirthDate();
-        this.type = pet.getType();
+        this.type = pet.getType().getName();
     }
 }
