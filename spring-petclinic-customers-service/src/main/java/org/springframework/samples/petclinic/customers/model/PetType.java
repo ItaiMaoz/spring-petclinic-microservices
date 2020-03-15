@@ -16,11 +16,14 @@
 package org.springframework.samples.petclinic.customers.model;
 
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import javax.validation.constraints.NotBlank;
 
 import org.springframework.validation.annotation.Validated;
 
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 /**
  * @author Juergen Hoeller
@@ -29,41 +32,46 @@ import lombok.EqualsAndHashCode;
  * @author itaimaoz
  * Changing to value object
  */
-//@Embeddable
+@Embeddable
+@NoArgsConstructor
 @EqualsAndHashCode
 @Validated
 public class PetType {
     
-	@NotBlank
 	//FIXME use validation annotation
-    private String name;
+		@NotBlank
+	    @Column(name = "type")
+		private String name;
 
 
-	private void setName(String name) {
-		this.name = name;
-	}
+		private void setName(String name) {
+			this.name = name;
+		}
+		
+	    public String getName() {
+	        return this.name;
+	    }
+	    
+		//FIXME use validation annotations
+	    PetType(@NotBlank String petType) {
+	    	
+	    	
+	    	if (petType == null) {
+	    		throw new IllegalArgumentException("Pet Type was null");
+	    	}
+	    	
+	    	petType = petType.trim().toLowerCase();
+	    	
+	    	if (petType.length() == 0 ) {
+	    		throw new IllegalArgumentException("Pet Type was empty");
+	    	}
+	    	
+	    	this.setName(petType);
+	    }
+
 	
-    public String getName() {
-        return this.name;
-    }
     
-	//FIXME use validation annotations
-    PetType(@NotBlank String petType) {
-    	
-    	if (petType == null) {
-    		throw new IllegalArgumentException("Pet Type was null");
-    	}
-    	
-    	petType = petType.trim().toLowerCase();
-    	
-    	if (petType.length() == 0 ) {
-    		throw new IllegalArgumentException("Pet Type was empty");
-    	}
-    	
-    	this.setName(petType);
-    }
-    
-    public static PetType getPetType(String petTypeString) {
+public static PetType getPetType(String petTypeString) {
     	
     	return new PetType(petTypeString);
     }

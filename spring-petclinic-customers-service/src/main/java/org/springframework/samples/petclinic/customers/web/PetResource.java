@@ -22,9 +22,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.samples.petclinic.customers.model.*;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
+import javax.el.MethodNotFoundException;
 
 /**
  * @author Juergen Hoeller
@@ -44,10 +47,11 @@ class PetResource {
     //TODO fix to use value objects
     @GetMapping("/petTypes")
     public List<PetType> getPetTypes() {
-    	return Collections.emptyList();
-   /* FIXME fix getting pet types
-        return petRepository.findPetTypes();
-        */
+    	throw new MethodNotFoundException("method not supported yet");
+    	//return Collections.emptyList();
+    	//return petRepository.findPetTypes();
+
+      
     }
 
     @PostMapping("/owners/{ownerId}/pets")

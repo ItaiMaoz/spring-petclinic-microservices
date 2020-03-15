@@ -18,6 +18,7 @@ package org.springframework.samples.petclinic.customers.model;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -32,6 +33,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import lombok.NoArgsConstructor;
+
 import org.springframework.core.style.ToStringCreator;
 
 /**
@@ -45,6 +49,7 @@ import org.springframework.core.style.ToStringCreator;
  */
 @Entity
 @Table(name = "pets")
+@NoArgsConstructor
 public class Pet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,9 +62,12 @@ public class Pet {
     @Temporal(TemporalType.DATE)
     private Date birthDate;
 
-    @Column(name = "type")
+/*    @Column(name = "type")
     @NotBlank
     private String typeTypeStr;
+*/    
+    @Embedded
+    private PetType petType;
     
 
     @ManyToOne
@@ -72,22 +80,23 @@ public class Pet {
     }
     
     
-    public Pet(PetType petType) {
-    	_internalSetPetType(petType);
+    public Pet(final PetType petType) {
+//    	_internalSetPetType(petType);
+    	this.petType = petType;
     }
     
-    private Pet () {
-    	
-    }
+    
     
 
-
-	private void _internalSetPetType(PetType petType) {
+    // TODO Remove
+/*	private void _internalSetPetType(PetType petType) {
     	//FIXME change back to PetType
     	this.typeTypeStr = petType.getName();
 	}
+*/
 
-    public void setId(final Integer id) {
+    //TODO change to private?
+	public void setId(final Integer id) {
         this.id = id;
     }
 
@@ -108,7 +117,8 @@ public class Pet {
     }
 
     public PetType getType() {
-    	return PetType.getPetType(this.typeTypeStr);
+//    	return PetType.getPetType(this.typeTypeStr);
+    	return petType;
     	
     	
     }
